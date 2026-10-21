@@ -4,7 +4,7 @@ const postDetails = document.getElementById("post-details");
 const postComments = document.getElementById("post-comments");
 
 async function initDetails() {
-    posts = loadPosts() || [];
+    let posts = loadPosts() || [];
     const post = posts.find(p => p.id === id);
 
     if (post === undefined) {

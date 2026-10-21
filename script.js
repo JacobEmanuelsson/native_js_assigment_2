@@ -3,6 +3,9 @@ let posts = [];
 
 const postContainer = document.getElementById("post-container");
 
+const searchForm = document.getElementById("search-form");
+searchForm.addEventListener("submit", (event) => {searchPost(event)})
+
 async function init() {
 
     const saved = loadPosts();
@@ -22,7 +25,7 @@ async function init() {
         }
         savePosts();
     }
-
+    populateFilter();
     renderPosts();
 }
 
@@ -91,7 +94,6 @@ function renderPosts() {
                 </label>
                 <button type="submit">Save</button>
             </form>
-
         `;
 
         card.querySelector(".remove-btn").addEventListener("click", () => removeCard(post.id));
@@ -339,6 +341,52 @@ async function updatePost(postId, changes) {
     }
 }
 
+function searchPost(event) {
+    event.preventDefault();
+
+    const formData = new FormData(searchForm);
+    const searchString = formData.get("search-post").trim().toLowerCase();
+    const tag = formData.get("filter-post");
+    const direction = formData.get("sort-post");
+
+    if (direction === "views-desc") {
+        posts.sort((a,b) => b.views - a.views);
+    } else if (direction === "views-asc") {
+        posts.sort((a,b) => a.views - b.views);
+    }
+
+    renderPosts();
+
+    posts.forEach((post, i) => {
+        const matches =
+            post.title.toLowerCase().includes(searchString) &&
+            (tag === "" || post.tags.includes(tag));
+
+        postContainer.children[i].hidden = !matches;
+    });
+
+
+}
+
+
+function populateFilter() {
+    const select = document.getElementById("filter-post");
+    const tags = new Set();
+
+    for (const post of posts) {
+        for (const tag of post.tags) {
+            tags.add(tag);
+        }
+    }
+
+    select.innerHTML = `<option value="">All</option>`;
+
+    for (const tag of tags) {
+        select.innerHTML += `<option value="${tag}">${tag}</option>`;
+    }
+}
+
 if (postContainer !== null) {
     init();
 }
+
