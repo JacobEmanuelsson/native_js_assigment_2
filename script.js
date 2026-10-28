@@ -4,7 +4,19 @@ let posts = [];
 const postContainer = document.getElementById("post-container");
 
 const searchForm = document.getElementById("search-form");
-searchForm.addEventListener("submit", (event) => {searchPost(event)})
+if (searchForm !== null) {
+    searchForm.addEventListener("submit", (event) => {searchPost(event)})
+}
+
+const errorBox = document.getElementById("error-message");
+errorBox.querySelector(".error-close").addEventListener("click", () => {
+    errorBox.hidden = true;
+});
+
+function showError(message) {
+    errorBox.querySelector("p").textContent = message;
+    errorBox.hidden = false;
+}
 
 async function init() {
 
@@ -13,7 +25,11 @@ async function init() {
     if (saved != null) {
         posts = saved;
     } else {
-        posts = await fetchPosts();
+        const fetched = await fetchPosts();
+        if (fetched === null) {
+            return;
+        }
+        posts = fetched;
         const counts = await fetchCommentCounts();
 
         for (const post of posts) {
@@ -51,11 +67,12 @@ async function fetchPosts() {
 
         const data = await response.json();
         return data.posts;
-       
+
 
     } catch (error) {
         console.error(error)
-        return [];
+        showError("Could not load the posts. Please check your connection and reload the page.");
+        return null;
     }
 }
 
@@ -135,6 +152,7 @@ async function deletePost(postId) {
         return await response.json();
     } catch (error) {
         console.error(error)
+        showError("Could not remove the post. Please try again.");
         return null;
     }
 }
@@ -145,7 +163,7 @@ function editCard(card) {
 
     if (!form.hidden) {
         form.hidden = true;
-        button.textContent = "Edit post";
+        button.textContent = "Edit";
         return;
     }
 
@@ -182,6 +200,7 @@ async function fetchCommentCounts() {
         return counts;
     } catch (error) {
         console.error(error);
+        showError("Could not load the comment counts. They may show as 0.");
         return {};
     }
 }
@@ -213,7 +232,11 @@ async function showComments(post, card) {
     }
 
     if (post.comments === undefined) {
-        post.comments = await fetchComments(post.id);
+        const comments = await fetchComments(post.id);
+        if (comments === null) {
+            return;
+        }
+        post.comments = comments;
         savePosts();
     }
 
@@ -235,7 +258,8 @@ async function fetchComments(postId) {
         return data.comments;
     } catch (error) {
         console.error(error);
-        return [];
+        showError("Could not load the comments. Please try again.");
+        return null;
     }
 }
 
@@ -259,6 +283,7 @@ async function addComment(postId, body) {
         return await response.json();
     } catch (error) {
         console.error(error);
+        showError("Could not post your comment. Please try again.");
         return null;
     }
 }
@@ -337,6 +362,7 @@ async function updatePost(postId, changes) {
         return await response.json();
     } catch (error) {
         console.error(error);
+        showError("Could not save your changes to the post. Please try again.");
         return null;
     }
 }

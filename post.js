@@ -4,16 +4,21 @@ const postDetails = document.getElementById("post-details");
 const postComments = document.getElementById("post-comments");
 
 async function initDetails() {
-    let posts = loadPosts() || [];
+    posts = loadPosts() || [];
     const post = posts.find(p => p.id === id);
 
     if (post === undefined) {
         postDetails.textContent = "Post not found";
+        showError("This post could not be found. Go back and open it from the list.");
         return;
     }
 
     if (post.comments === undefined) {
-        post.comments = await fetchComments(post.id);
+        const comments = await fetchComments(post.id);
+        if (comments === null) {
+            return;
+        }
+        post.comments = comments;
         savePosts();
     }
 
