@@ -156,12 +156,17 @@ button[type="submit"]:hover {
     margin-bottom: 12px;
 }
 
-.comments-list p,
-#post-comments p {
+.comment {
     padding: 8px 12px;
     background: #f0f2f5;
     border-radius: 10px;
     font-size: 0.9rem;
+}
+
+.comment-user {
+    font-weight: bold;
+    font-size: 0.8rem;
+    margin-bottom: 2px;
 }
 
 .comment-form,

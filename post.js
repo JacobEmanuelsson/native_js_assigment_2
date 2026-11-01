@@ -64,7 +64,12 @@ function renderDetails(post) {
     }
 
     for (const comment of post.comments) {
-        postComments.innerHTML += `<p>${comment.user.username} ${comment.body}</p>`;
+        postComments.innerHTML += `
+            <div class="comment">
+                <p class="comment-user">${comment.user.username}</p>
+                <p class="comment-body">${comment.body}</p>
+            </div>
+        `;
     }
 }
 

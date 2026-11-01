@@ -216,7 +216,12 @@ function renderComments(post,card) {
     } 
 
     for (const comment of post.comments) {
-        list.innerHTML += `<p>${comment.user.username} ${comment.body}</p>`
+        list.innerHTML += `
+            <div class="comment">
+                <p class="comment-user">${comment.user.username}</p>
+                <p class="comment-body">${comment.body}</p>
+            </div>
+        `;
     }
     
 }
